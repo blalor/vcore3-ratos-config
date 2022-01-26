@@ -1,3 +1,4 @@
 firmware_binaries/
 .theme/
 input_shaper/
+printer-*.cfg
