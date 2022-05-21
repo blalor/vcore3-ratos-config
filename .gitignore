@@ -3,3 +3,5 @@ firmware_binaries/
 input_shaper/
 printer-*.cfg
 moonraker_secrets.conf
+.DS_Store
+.moonraker.conf.bkp
