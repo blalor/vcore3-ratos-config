@@ -5,3 +5,4 @@ printer-*.cfg
 moonraker_secrets.conf
 .DS_Store
 .moonraker.conf.bkp
+*.config.old
