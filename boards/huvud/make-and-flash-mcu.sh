@@ -3,8 +3,7 @@ set -e -u -o pipefail
 
 ## based on https://github.com/Rat-OS/RatOS-configuration/blob/master/boards/btt-octopus-11/make-and-flash-mcu.sh
 
-declare -r MCU=/dev/null
-declare -r VENDORDEVICEID="cafe:babe"
+declare -r VENDORDEVICEID="1209:beba"
 
 basedir=$( dirname "$( readlink -f "${0}" )" )
 declare -r basedir
@@ -14,7 +13,6 @@ declare -r KCFG="/home/pi/klipper_config"
 declare -r FW_BIN=${KCFG}/firmware_binaries
 
 declare -r MAKE=( make KCONFIG_CONFIG="${basedir}/firmware.config" )
-declare -r MAKE_FLASH_MCU=( "${MAKE[@]}" flash "FLASH_DEVICE=${MCU}" )
 declare -r MAKE_FLASH_DFU=( "${MAKE[@]}" flash "FLASH_DEVICE=${VENDORDEVICEID}" )
 
 if [ "$EUID" -ne 0 ]; then
@@ -46,35 +44,10 @@ trap cleanup EXIT
 cp -f out/klipper.bin ${FW_BIN}/huvud.bin
 cp -f out/klipper.dict ${FW_BIN}/huvud.dict
 
-# service klipper stop
-# if [ -h $MCU ]; then
-#     echo "Flashing Octopus via path"
-#     "${MAKE_FLASH_MCU[@]}"
-# else
-#     echo "Flashing Octopus via vendor and device ids - 1st pass"
-#     "${MAKE_FLASH_DFU[@]}"
-# fi
+service klipper stop
 
-# sleep 5
+echo "==== install jumper on BOOT1"
+echo "Flashing Huvud via vendor and device ids"
+"${MAKE_FLASH_DFU[@]}"
 
-# if [ -h $MCU ]; then
-#     echo "Flashing Successful!"
-# else
-#     echo "Flashing Octopus via vendor and device ids - 2nd pass"
-#     "${MAKE_FLASH_DFU[@]}"
-
-#     sleep 5
-
-#     if [ -h $MCU ]; then
-#         echo "Flashing Successful!"
-#     else
-#         echo "Flashing Octopus via vendor and device ids - 3rd pass"
-#         if "${MAKE_FLASH_DFU[@]}" ; then
-#             echo "Flashing successful!"
-#         else
-#             echo "Flashing failed :("
-#             exit 1
-#         fi
-#     fi
-# fi
-
+echo "==== remove jumper from BOOT1"
