@@ -1,0 +1,1 @@
+../ebb42_1.0/make-and-flash-mcu.sh

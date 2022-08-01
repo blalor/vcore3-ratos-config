@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e -u -o pipefail
 
+boardname=$( basename "${0}" )
 basedir=$( dirname "$( readlink -f "${0}" )" )
-declare -r basedir
+declare -r basedir boardname
 
 declare -r KSRC="/home/pi/klipper"
 declare -r KCFG="/home/pi/klipper_config"
@@ -10,10 +11,10 @@ declare -r FW_BIN=${KCFG}/firmware_binaries
 
 declare -r MAKE=( make KCONFIG_CONFIG="${basedir}/firmware.config" )
 
-if [ "$EUID" -ne 0 ]; then
-    echo "ERROR: Please run as root"
-    exit 1
-fi
+# if [ "$EUID" -ne 0 ]; then
+#     echo "ERROR: Please run as root"
+#     exit 1
+# fi
 
 if [ $# -ne 1 ]; then
     echo "usage: $0 <canbus_uuid>"
@@ -44,7 +45,8 @@ trap cleanup EXIT
 "${MAKE[@]}" clean
 "${MAKE[@]}"
 
-cp -f out/klipper.bin ${FW_BIN}/firmware-ebb42-10.bin
+cp -f out/klipper.bin "${FW_BIN}/${boardname}.bin"
+cp -f out/klipper.dict "${FW_BIN}/${boardname}.dict"
 
 service klipper stop
 if lib/canboot/flash_can.py -i "${can_iface}" -f out/klipper.bin -u "${canbus_uuid}" ; then
