@@ -5,7 +5,7 @@ import os
 
 
 def main():
-    with open(os.path.expanduser("~/klipper_logs/klippy.log")) as ifp:
+    with open(os.path.expanduser("~/printer_data/logs/klippy.log")) as ifp:
         last_start = None
         line = ifp.readline()
         while line:

@@ -10,3 +10,6 @@ Current config:
 * Euclid probe
 
 I'm using *parts of* the modular Klipper config in [RatOS](https://os.ratrig.com), and the `config` submodule points to that repository.  I've chosen not to include `config/macros.cfg` in preference to my own, for more control and readability.
+
+
+https://canbus.esoterical.online/
