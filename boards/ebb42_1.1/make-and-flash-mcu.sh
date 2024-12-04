@@ -1,12 +1,25 @@
 #!/bin/bash
 set -e -u -o pipefail
 
-boardname=$( basename $( dirname "${0}" ) )
+if [ $# -ne 1 ]; then
+    echo "usage: $0 <canbus_uuid>"
+    exit 1
+fi
+
+declare -r can_iface="can0"
+declare -r canbus_uuid="${1}"
+
+boardname=$( basename "$( dirname "${0}" )" )
 basedir=$( dirname "$( readlink -f "${0}" )" )
 declare -r basedir boardname
 
-declare -r KSRC="/home/pi/klipper"
-declare -r KCFG="/home/pi/klipper_config"
+declare -r USER="${SUDO_USER:-${USER}}"
+user_home=$( getent passwd "${USER}" | cut -d : -f 6 )
+declare -r user_home
+
+declare -r KSRC="${user_home}/klipper"
+declare -r KCFG="${user_home}/klipper-config"
+
 declare -r FW_BIN=${KCFG}/firmware_binaries
 
 declare -r MAKE=( make KCONFIG_CONFIG="${basedir}/firmware.config" )
@@ -15,14 +28,6 @@ declare -r MAKE=( make KCONFIG_CONFIG="${basedir}/firmware.config" )
 #     echo "ERROR: Please run as root"
 #     exit 1
 # fi
-
-if [ $# -ne 1 ]; then
-    echo "usage: $0 <canbus_uuid>"
-    exit 1
-fi
-
-declare -r can_iface="can0"
-declare -r canbus_uuid="${1}"
 
 if [ ! -d ${FW_BIN} ]; then
     mkdir ${FW_BIN}
@@ -33,7 +38,7 @@ cd ${KSRC}
 function cleanup() {
     rc=$?
 
-    chown pi:pi -R ${KSRC} ${FW_BIN}
+    chown ${USER}:${USER} -R ${KSRC} ${FW_BIN}
 
     service klipper start
 
