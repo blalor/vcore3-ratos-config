@@ -1,3 +1,6 @@
 [submodule "config"]
 	path = config
 	url = https://github.com/Rat-OS/RatOS-configuration.git
+[submodule "indx"]
+	path = indx
+	url = https://github.com/BondtechAB/INDX.git
